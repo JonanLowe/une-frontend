@@ -1,13 +1,13 @@
-import './App.css'
-import { Route, Routes } from 'react-router-dom'
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Game from './pages/Game';
 
 function App() {
-
   return (
-    <>
-      <h1>UNO placeholder</h1>
-    </>
-  )
+    <Routes>
+      <Route path="/" element={<Game />} />
+    </Routes>
+  );
 }
 
-export default App
+export default App;
