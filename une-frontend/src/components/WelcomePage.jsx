@@ -3,17 +3,20 @@
 import {Link} from "react-router-dom"
 import { useState } from "react";
 // import socket stuff
+import { socket } from '../socket';
 
 
-export default function CreateGamePage(){
+export default function WelcomePage(){
 
 
     function handleCreateGame(){
+
+        socket.connect()
         setIsCreating(true)
-        return 0;
+
     }
 
-    const room_id = 0;
+
 
     const [isCreating, setIsCreating] = useState(false);
 
@@ -33,8 +36,8 @@ export default function CreateGamePage(){
      {/* It will link to a gameroom and pass the socket room id to the gameroom*/}
 
      
-     <Link to={`/gameroom/${room_id}`}>
-     <button id="create-game" onClick={() => {handleCreateGame}}> {isCreating? "Creating Game..." : "Create Game" }</button>
+     <Link to={'/game'}>
+     <button id="create-game" onClick={() => {handleCreateGame()}}> {isCreating? "Joining Game..." : "Play" }</button>
     </Link>
     
     </section>
