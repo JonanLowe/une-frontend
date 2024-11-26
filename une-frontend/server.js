@@ -4,11 +4,10 @@ import express from "express";
 const app = express();
 const server = createServer(app);
 
-
 //ORIGIN here must be same as port used by VITE::::
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5185",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
   },
 });

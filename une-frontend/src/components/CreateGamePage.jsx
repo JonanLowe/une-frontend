@@ -34,7 +34,7 @@ export default function CreateGamePage(){
 
      
      <Link to={`/gameroom/${room_id}`}>
-     <button id="create-game" onClick={() => {handleCreateGame}}> {isCreating? "Creating Game..." : "Create Game" }</button>
+     <button id="create-game" onClick={() => {handleCreateGame}}> {isCreating? "Joining Game..." : "Play" }</button>
     </Link>
     
     </section>

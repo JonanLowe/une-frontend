@@ -38,11 +38,17 @@ export default function App() {
     };
   }, []);
 
+  /*
+  Routes: / welcome page - 'play' button links to game
+          / game for game page
+  */
+
   return (
   <>
     <Routes>
     <Route path="/" element={<Game />} />
-    <Route path="/gameroom/:room_id" element={<GameRoomPlaceHolder/>}/>
+    <Route path="/createGame" element={<CreateGamePage />} />
+    <Route path="/gameroom/:room_id" element={<Game/>}/>
     </Routes>
       <div className = "App">
          <ConnectionState isConnected={ isConnected } />
