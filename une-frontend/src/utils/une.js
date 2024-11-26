@@ -106,11 +106,13 @@ class Deck{
     }
 
     drawCards(cardsDrawn, playerHand){
+        console.log("Try draw")
         if(cardsDrawn> this.deckPile.length)this.resetPiles(playingDiscardPile.discardPile)
         for(let i=0; i<cardsDrawn; i++){
             playerHand.push(this.deckPile[this.deckPile.length -1])
             this.deckPile.pop(this.deckPile[this.deckPile.length -1])
         }
+        console.log(playerHand)
         if(this.deckPile.length===0)this.resetPiles(playingDiscardPile.discardPile)
       }
 
@@ -240,4 +242,5 @@ Game(){
 }
                     */
 
-module.exports={Player, Deck, Discard, hasAnyoneWon}
+//module.exports={Player, Deck, Discard, hasAnyoneWon}
+export{Player, Deck, Discard, hasAnyoneWon}

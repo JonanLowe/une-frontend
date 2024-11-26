@@ -1,7 +1,24 @@
-import React from 'react';
-
+import { useEffect, useState } from "react";
+import { Deck, Discard, Player } from "../utils/une.js";
+ 
+const playingDeck= new Deck
+const PlayerOne= new Player("Player 1")
+const playingDiscardPile= new Discard()
+playingDeck.shuffle()
+console.log(playingDeck.deckPile)
+console.log(PlayerOne)
 
 export default function Game() {
+  const [deck, setDeck]= useState(playingDeck.deckPile)
+  const [p1Hand, setP1Hand]= useState(PlayerOne.hand)
+
+  useEffect(()=>{
+    deckButton.addEventListener("click", ()=>{
+      playingDeck.drawCards(1, PlayerOne.hand)
+      setP1Hand(PlayerOne.hand)
+      console.log(p1Hand, "STATE")
+    })
+  }, [PlayerOne.hand, p1Hand])
   return (
     <div className="position-relative vh-100 bg-success overflow-hidden">
       {/* Quit button */}
@@ -62,7 +79,7 @@ export default function Game() {
         <div className="position-absolute bottom-0 start-50 translate-middle-x bg-success p-3 rounded w-50 text-center">
           <div className="fw-bold mb-2">Player 1</div>
           <div className="d-flex justify-content-center gap-2">
-            {[...Array(7)].map((_, i) => (
+            {p1Hand.map((_, i) => (
               <div
                 key={i}
                 className="bg-white border border-secondary rounded shadow-sm"
@@ -70,13 +87,16 @@ export default function Game() {
               ></div>
             ))}
           </div>
+          <p>AHHHH: {p1Hand}</p>
         </div>
 
-        {/* Devk area*/}
+        {/* Deck area*/}
         <div className="position-absolute top-50 start-50 translate-middle bg-warning p-3 rounded d-flex gap-3">
           <button
             className="bg-white border border-success rounded shadow d-flex align-items-center justify-content-center text-center"
             style={{ width: '120px', height: '200px' }}
+            id="deckButton"
+            //onClick={playingDeck.drawCards(1, PlayerOne.hand)}
           >
             Draw Cards
           </button>
