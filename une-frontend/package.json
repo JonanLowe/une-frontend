@@ -11,14 +11,11 @@
       "start": "nodemon server.js"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.2.0",
-    "@emotion/react": "^11.13.5",
-    "@emotion/styled": "^11.13.5",
     "cors": "^2.8.5",
-    "express-promise-router": "^4.1.1",
-    "framer-motion": "^11.11.17",
     "nodemon": "^3.1.7",
+    "bootstrap": "^5.3.3",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.6",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.0.1",
     "socket.io": "^4.8.1",

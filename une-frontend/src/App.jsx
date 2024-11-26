@@ -1,6 +1,7 @@
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import { useState, useEffect } from 'react';
+import Game from './pages/Game';
 
 //socket.io components:
 import {socket} from "./socket.js"
@@ -40,7 +41,7 @@ export default function App() {
   return (
   <>
     <Routes>
-    <Route path="/" element={<CreateGamePage/>}/>
+    <Route path="/" element={<Game />} />
     <Route path="/gameroom/:room_id" element={<GameRoomPlaceHolder/>}/>
     </Routes>
       <div className = "App">
