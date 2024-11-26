@@ -1,7 +1,7 @@
 import './App.css'
 import { Route, Routes } from 'react-router-dom'
 import { useState, useEffect } from 'react';
-import Game from './pages/Game';
+
 
 //socket.io components:
 import {socket} from "./socket.js"
@@ -9,8 +9,9 @@ import {socket} from "./socket.js"
 import { ConnectionState } from './components/ConnectionState';
 import { ConnectionManager } from './components/ConnectionManager';
 
-import CreateGamePage from './components/CreateGamePage'
-import GameRoomPlaceHolder from './components/GameRoomPlaceHolder'
+import WelcomePage from './components/WelcomePage.jsx'
+import Game from './pages/Game';
+import GameOver from './components/GameOver.jsx'
 
 export default function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
@@ -46,9 +47,9 @@ export default function App() {
   return (
   <>
     <Routes>
-    <Route path="/" element={<Game />} />
-    <Route path="/createGame" element={<CreateGamePage />} />
-    <Route path="/gameroom/:room_id" element={<Game/>}/>
+    <Route path="/" element={<WelcomePage />} />
+    <Route path="/game/" element={<Game/>}/>
+    <Route path="/gameOver/" element={<GameOver/>}/>
     </Routes>
       <div className = "App">
          <ConnectionState isConnected={ isConnected } />

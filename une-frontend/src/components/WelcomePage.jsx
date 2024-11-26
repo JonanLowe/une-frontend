@@ -5,7 +5,7 @@ import { useState } from "react";
 // import socket stuff
 
 
-export default function CreateGamePage(){
+export default function WelcomePage(){
 
 
     function handleCreateGame(){
@@ -33,7 +33,7 @@ export default function CreateGamePage(){
      {/* It will link to a gameroom and pass the socket room id to the gameroom*/}
 
      
-     <Link to={`/gameroom/${room_id}`}>
+     <Link to={'/game'}>
      <button id="create-game" onClick={() => {handleCreateGame}}> {isCreating? "Joining Game..." : "Play" }</button>
     </Link>
     

@@ -7,7 +7,7 @@ const server = createServer(app);
 //ORIGIN here must be same as port used by VITE::::
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "http://localhost:5174",
     methods: ["GET", "POST"],
   },
 });
