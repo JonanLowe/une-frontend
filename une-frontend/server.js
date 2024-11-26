@@ -8,7 +8,7 @@ const server = createServer(app);
 //ORIGIN here must be same as port used by Vite
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5174",
+    origin: "http://localhost:5175",
     methods: ["GET", "POST"],
   },
 });
@@ -21,8 +21,8 @@ socket.on("disconnect", () => {
 
 //PORT here must be the same as in socket.js
 
-server.listen(4000, () => {
-  console.log("Server Listening on port 4000");
+server.listen(4001, () => {
+  console.log("Server Listening on port 4001");
 });
 
 // GAME SETUP
