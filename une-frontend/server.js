@@ -1,10 +1,11 @@
 import { createServer } from "node:http";
 import { Server } from "socket.io";
+import { socket } from "./src/socket.js";
 import express from "express";
 const app = express();
 const server = createServer(app);
 
-//ORIGIN here must be same as port used by VITE::::
+//ORIGIN here must be same as port used by Vite
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5174",
@@ -14,48 +15,53 @@ const io = new Server(server, {
 
 io.on("connection", connected);
 
-// socket.on("disconnect", () => {
-//     console.log("A user disconnected");
-//   });
+socket.on("disconnect", () => {
+  console.log("A user disconnected");
+});
 
-//PORT HERE MUST BE THE SAME AS in socket.js
+//PORT here must be the same as in socket.js
 
 server.listen(4000, () => {
   console.log("Server Listening on port 4000");
 });
 
-let players = {};
+// GAME SETUP
+
+import { Player } from "./src/utils/une.js";
+
+const totalPlayers = [];
 
 function connected(socket) {
   console.log("New client connected, with id: " + socket.id);
-  if (Object.keys(players).length === 0) {
-    console.log("first player joined");
-    players[socket.id] = { playerNumber: 1 };
-    console.log(players);
-    //create/populate player 1
-  } else if (Object.keys(players).length === 1) {
+  if (totalPlayers.length === 0) {
+    totalPlayers[0] = new Player("Player 1", socket.id);
+  } else if (totalPlayers.length === 1) {
     console.log("second player joined");
-    players[socket.id] = { playerNumber: 2 };
-    console.log(players);
-  } else if (Object.keys(players).length > 1) {
+    if (totalPlayers[0].username === "Player 1") {
+      totalPlayers[1] = new Player("Player 2", socket.id);
+    } else if (totalPlayers[0].username === "Player 2") {
+      totalPlayers[1] = new Player("Player 1", socket.id);
+    }
+  } else if (totalPlayers.length > 1) {
     console.log("game room full");
-    console.log(players);
     return false;
   }
-  io.emit("updateConnections", players);
+  io.emit("updateConnections", totalPlayers);
+
   socket.on("disconnect", function () {
-    delete players[socket.id];
+    if (totalPlayers[0].socketID === socket.id) {
+      console.log(totalPlayers[0], "it's this one - 0");
+      totalPlayers.splice(0, 1);
+      console.log(totalPlayers);
+    } else if (totalPlayers[1].socketID === socket.id) {
+      console.log(totalPlayers[1], "it's this one - 1");
+      totalPlayers.splice(1, 1);
+      console.log(totalPlayers);
+    }
+
     console.log("Goodbye client with id " + socket.id);
-    console.log("Current number of players: " + Object.keys(players).length);
-    console.log(players);
-    io.emit("updateConnections", players);
+    console.log("Current number of players: " + totalPlayers.length);
+    console.log(totalPlayers);
+    io.emit("updateConnections", totalPlayers);
   });
-  // socket.on('userCommands', data => {
-  //     serverBalls[socket.id].left = data.left;
-  //     serverBalls[socket.id].up = data.up;
-  //     serverBalls[socket.id].right = data.right;
-  //     serverBalls[socket.id].down = data.down;
-  //     serverBalls[socket.id].action = data.action;
-  //     console.log("command");
-  // })
 }
