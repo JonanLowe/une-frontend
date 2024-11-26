@@ -46,22 +46,20 @@ function connected(socket) {
     console.log("game room full");
     return false;
   }
-  io.emit("updateConnections", totalPlayers);
+  // io.emit("updateConnections", totalPlayers);
+
+  socket.on("buttonPressed", (buttonPressedState) => {
+    io.emit("buttonPressedFromServer", buttonPressedState);
+  });
 
   socket.on("disconnect", function () {
     if (totalPlayers[0].socketID === socket.id) {
-      console.log(totalPlayers[0], "it's this one - 0");
       totalPlayers.splice(0, 1);
-      console.log(totalPlayers);
     } else if (totalPlayers[1].socketID === socket.id) {
-      console.log(totalPlayers[1], "it's this one - 1");
       totalPlayers.splice(1, 1);
-      console.log(totalPlayers);
     }
-
     console.log("Goodbye client with id " + socket.id);
     console.log("Current number of players: " + totalPlayers.length);
-    console.log(totalPlayers);
-    io.emit("updateConnections", totalPlayers);
+    // io.emit("updateConnections", totalPlayers);
   });
 }

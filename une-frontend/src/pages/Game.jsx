@@ -19,13 +19,26 @@ playingDeck.shuffle()
 console.log(playingDeck.deckPile)
 console.log(PlayerOne)
 
+import { socket } from "../socket.js";
+
 export default function Game() {
   const [deck, setDeck]= useState(playingDeck.deckPile)
   const [p1Hand, setP1Hand]= useState(PlayerOne.hand)
+  const [buttonPressed, setButtonPressed] = useState(false)
+  socket.off("buttonPressedFromServer")
+
+function socketTest (){
+  socket.emit("buttonPressed", buttonPressed);
+}
+
+socket.on("buttonPressedFromServer", (response) => {
+  setButtonPressed(!response)
+})
 
   return (
     <div className="position-relative vh-100 bg-success overflow-hidden">
-      <QuitButton />
+      <QuitButton socketTest = {socketTest} buttonPressed = {buttonPressed}/>
+        
 
       <div className="position-relative w-100 h-100 bg-success-subtle">
         <Player1 />
