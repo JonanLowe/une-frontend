@@ -13,11 +13,13 @@ import QuitButton from "./QuitButton.jsx";
 const playingDeck= new Deck
 const PlayerOne= new Player("Player 1")
 const PlayerTwo= new Player("Player 2")
-const totalPlayers=[]
+const totalPlayers = []
+
 const playingDiscardPile= new Discard()
 playingDeck.shuffle()
 console.log(playingDeck.deckPile)
-console.log(PlayerOne)
+console.log(PlayerOne, PlayerOne)
+console.log(totalPlayers, "totalPlayers")
 
 import { socket } from "../socket.js";
 
@@ -28,6 +30,7 @@ export default function Game() {
   socket.off("buttonPressedFromServer")
 
 function socketTest (){
+  console.log("button pressed by ", socket.id)
   socket.emit("buttonPressed", buttonPressed);
 }
 
@@ -35,11 +38,11 @@ socket.on("buttonPressedFromServer", (response) => {
   setButtonPressed(!response)
 })
 
+
   return (
     <div className="position-relative vh-100 bg-success overflow-hidden">
       <QuitButton socketTest = {socketTest} buttonPressed = {buttonPressed}/>
-        
-
+      
       <div className="position-relative w-100 h-100 bg-success-subtle">
         <Player1 />
         <Player2 />

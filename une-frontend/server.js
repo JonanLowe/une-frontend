@@ -8,7 +8,7 @@ const server = createServer(app);
 //ORIGIN here must be same as port used by Vite
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5175",
+    origin: "http://localhost:5173",
     methods: ["GET", "POST"],
   },
 });
@@ -21,8 +21,8 @@ socket.on("disconnect", () => {
 
 //PORT here must be the same as in socket.js
 
-server.listen(4001, () => {
-  console.log("Server Listening on port 4001");
+server.listen(4000, () => {
+  console.log("Server Listening on port 4000");
 });
 
 // GAME SETUP
@@ -46,9 +46,12 @@ function connected(socket) {
     console.log("game room full");
     return false;
   }
+  // need to emit players and receive it in game:
   // io.emit("updateConnections", totalPlayers);
 
   socket.on("buttonPressed", (buttonPressedState) => {
+    console.log("buttonpressedfromserverlog of player", socket.id);
+
     io.emit("buttonPressedFromServer", buttonPressedState);
   });
 
@@ -60,6 +63,10 @@ function connected(socket) {
     }
     console.log("Goodbye client with id " + socket.id);
     console.log("Current number of players: " + totalPlayers.length);
+
+    // need to emit players and receive it in game:
     // io.emit("updateConnections", totalPlayers);
   });
+  console.log(totalPlayers, "totalPlayers from server");
+  // need to emit totalplayers.
 }
