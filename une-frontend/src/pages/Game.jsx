@@ -6,6 +6,7 @@ import PilesArea from "./PilesArea.jsx";
 import CallUnoButton from "./CallUnoButton.jsx";
 import QuitButton from "./QuitButton.jsx";
 import { socket } from "../socket.js";
+import GameOver from "../components/GameOver.jsx";
 
 
 export default function Game() {
@@ -17,7 +18,11 @@ export default function Game() {
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [isGameOn, setIsGameOn] = useState(false);
   const [buttonPressed, setButtonPressed] = useState(false) 
+  const [isGameOver, setIsGameOver] = useState(false);
   socket.off("buttonPressedFromServer")
+  socket.off("playCardFromServer")
+  socket.off("playerTwoPlayCardFromServer")
+  socket.off("playerOnePlayCardFromServer")
   
   function socketTest (){
   socket.emit("buttonPressed", buttonPressed);
@@ -36,18 +41,15 @@ socket.on("cardDrawnFromServer", (response) => {
 })
 
 socket.on("playCardFromServer", (response) => {
-  console.log(response, "playCardFromServer")
   setCurrentPlayer(response.newCurrentPlayer);
   setPlayingDiscardPile(response.newDiscardPile);
 })
 
 socket.on("playerOnePlayCardFromServer", (response) => {
-  console.log(response, "playerOnePlayCardFromServer")
   setPlayerOne(response);
 })
 
 socket.on("playerTwoPlayCardFromServer", (response) => {
-  console.log(response, "playerTwoPlayCardFromServer")
   setPlayerTwo(response);
 })
 
@@ -57,6 +59,10 @@ socket.on("gameStartFromServer", (response)=> {
   setPlayerOne(response.makeP1);
   setPlayerTwo(response.makeP2);
   setIsGameOn(response.gameOn);
+})
+
+socket.on("gameOverFromServer", (response)=>{
+  setIsGameOver(response)
 })
 
   const hasValidMove = (playerHand) => {
@@ -100,7 +106,6 @@ socket.on("gameStartFromServer", (response)=> {
   };
 
   const handlePlayCard = (playerNumber, cardIndex) => {
-    console.log("HANDLE PLAY CARD")
     if (playerNumber === currentPlayer) {
       if (playerNumber === 1) {
         const updatedPlayerOne = new Player(playerOne.username);
@@ -108,7 +113,9 @@ socket.on("gameStartFromServer", (response)=> {
         if(updatedPlayerOne.isValidCard(cardIndex, playingDiscardPile.discardPile)){
           updatedPlayerOne.playCard(cardIndex, playingDiscardPile.discardPile);
           socket.emit("playerOnePlayCard", updatedPlayerOne)
-
+          if(updatedPlayerOne.hand.length===0){
+            socket.emit("gameOver", true)
+          }
           socket.emit("playCard", {newCurrentPlayer: currentPlayer === 1 ? 2 : 1, newDiscardPile: { ...playingDiscardPile }});
         }
       } else {
@@ -117,7 +124,9 @@ socket.on("gameStartFromServer", (response)=> {
         if(updatedPlayerTwo.isValidCard(cardIndex, playingDiscardPile.discardPile)){
           updatedPlayerTwo.playCard(cardIndex, playingDiscardPile.discardPile);
           socket.emit("playerTwoPlayCard", updatedPlayerTwo)
-
+          if(updatedPlayerTwo.hand.length===0){
+            socket.emit("gameOver", true)
+          }
           socket.emit("playCard", {newCurrentPlayer: currentPlayer === 1 ? 2 : 1, newDiscardPile: { ...playingDiscardPile }});
         }
       }
@@ -127,7 +136,6 @@ socket.on("gameStartFromServer", (response)=> {
   return (
     <div className="position-relative vh-100 bg-success overflow-hidden">
       <QuitButton socketTest = {socketTest} buttonPressed = {buttonPressed} />
-    
       <div className="position-relative w-100 h-100 bg-success-subtle">
         <Player1
           hand={playerOne.hand}
@@ -143,7 +151,7 @@ socket.on("gameStartFromServer", (response)=> {
           discardPile={playingDiscardPile.discardPile}
           hasValidMove={hasValidMove(playerTwo.hand)}
         />
-        <PilesArea
+        {isGameOver? <GameOver />:  <PilesArea
           deck={playingDeck}
           discardPile={playingDiscardPile.discardPile}
           currentPlayer={currentPlayer}
@@ -151,7 +159,7 @@ socket.on("gameStartFromServer", (response)=> {
           hasValidMove={currentPlayer === 1 ? 
             hasValidMove(playerOne.hand) : 
             hasValidMove(playerTwo.hand)}
-        />
+        />}
       </div>
       <CallUnoButton 
         onClick={handleGameStart}

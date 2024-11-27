@@ -107,7 +107,6 @@ class Deck {
   }
 
   drawCards(cardsDrawn, playerHand) {
-    console.log("Try draw");
     if (cardsDrawn > this.deckPile.length)
       this.resetPiles(playingDiscardPile.discardPile);
     for (let i = 0; i < cardsDrawn; i++) {
@@ -160,9 +159,7 @@ class Player {
   }
 
   playCard(card, discardPile) {
-    console.log("attempt play card")
     if (this.isValidCard(card, discardPile)) {
-      console.log("playing card")
       discardPile.push(this.hand[card]);
       this.hand.splice(card, 1);
       this.isTurnFinished = true;

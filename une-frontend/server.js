@@ -90,6 +90,10 @@ function connected(socket) {
     io.emit("playerTwoPlayCardFromServer", updatedPlayerTwo);
   });
 
+  socket.on("gameOver", ()=>{
+    io.emit("gameOverFromServer", true)
+  })
+
   socket.on("disconnect", function () {
     if (totalPlayers[0].socketID === socket.id) {
       totalPlayers.splice(0, 1);
