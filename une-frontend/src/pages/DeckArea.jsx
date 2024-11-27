@@ -14,7 +14,7 @@ export default function DeckArea({ deck, currentPlayer, onDrawCard, hasValidMove
     >
       <div className="d-flex flex-column align-items-center">
         Draw Cards ({deck.deckPile.length})
-        {!hasValidMove && <div className="text-warning mt-2">Must Draw!</div>}
+        {!hasValidMove && <div className="text-warning mt-2">{`PLayer ${currentPlayer} Must Draw!`}</div>}
       </div>
     </button>
   );
