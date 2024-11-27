@@ -79,8 +79,6 @@ socket.on("gameStartFromServer", (response)=> {
     newDeck.startGame(totalPlayers, newDiscardPile.discardPile);
 
     socket.emit("gameStart", {deck: newDeck, discard: newDiscardPile, makeP1: newPlayerOne, makeP2: newPlayerTwo, gameOn: true})
-
-
   };
 
   const handleDrawCard = (playerNumber) => {
