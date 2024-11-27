@@ -5,7 +5,8 @@ import Player2 from "./Player2.jsx";
 import PilesArea from "./PilesArea.jsx";
 import CallUnoButton from "./CallUnoButton.jsx";
 import QuitButton from "./QuitButton.jsx";
- 
+import { socket } from "../socket.js";
+
 
 export default function Game() {
   const [playingDeck, setPlayingDeck] = useState(new Deck());
@@ -14,6 +15,18 @@ export default function Game() {
   const [playerTwo, setPlayerTwo] = useState(new Player("Player 2"));
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [isGameOn, setIsGameOn] = useState(false);
+  const [buttonPressed, setButtonPressed] = useState(false)
+  
+  socket.off("buttonPressedFromServer")
+  
+  function socketTest (){
+  console.log("button pressed by ", socket.id)
+  socket.emit("buttonPressed", buttonPressed);
+}
+
+  socket.on("buttonPressedFromServer", (response) => {
+    setButtonPressed(!response)
+})
 
   const hasValidMove = (playerHand) => {
     if (!playingDiscardPile.discardPile.length) return false;
@@ -83,7 +96,8 @@ export default function Game() {
 
   return (
     <div className="position-relative vh-100 bg-success overflow-hidden">
-      <QuitButton />
+      <QuitButton socketTest = {socketTest} buttonPressed = {buttonPressed} />
+    
       <div className="position-relative w-100 h-100 bg-success-subtle">
         <Player1
           hand={playerOne.hand}
