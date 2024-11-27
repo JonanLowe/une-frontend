@@ -105,16 +105,22 @@ socket.on("gameStartFromServer", (response)=> {
       if (playerNumber === 1) {
         const updatedPlayerOne = new Player(playerOne.username);
         updatedPlayerOne.hand = [...playerOne.hand];
-        updatedPlayerOne.playCard(cardIndex, playingDiscardPile.discardPile);
+        if(updatedPlayerOne.isValidCard(cardIndex, playingDiscardPile.discardPile)){
+          updatedPlayerOne.playCard(cardIndex, playingDiscardPile.discardPile);
           socket.emit("playerOnePlayCard", updatedPlayerOne)
+
+          socket.emit("playCard", {newCurrentPlayer: currentPlayer === 1 ? 2 : 1, newDiscardPile: { ...playingDiscardPile }});
+        }
       } else {
         const updatedPlayerTwo = new Player(playerTwo.username);
         updatedPlayerTwo.hand = [...playerTwo.hand];
-        updatedPlayerTwo.playCard(cardIndex, playingDiscardPile.discardPile);
+        if(updatedPlayerTwo.isValidCard(cardIndex, playingDiscardPile.discardPile)){
+          updatedPlayerTwo.playCard(cardIndex, playingDiscardPile.discardPile);
           socket.emit("playerTwoPlayCard", updatedPlayerTwo)
-      }
 
-      socket.emit("playCard", {newCurrentPlayer: currentPlayer === 1 ? 2 : 1, newDiscardPile: { ...playingDiscardPile }});
+          socket.emit("playCard", {newCurrentPlayer: currentPlayer === 1 ? 2 : 1, newDiscardPile: { ...playingDiscardPile }});
+        }
+      }
     }
   };
 
