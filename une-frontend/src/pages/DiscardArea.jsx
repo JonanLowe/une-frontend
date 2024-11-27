@@ -27,7 +27,7 @@ export default function DiscardArea({ discardPile }) {
         <>
           <div className="text-start">{topCard.cardNumber}</div>
           <div className="fs-1 fw-bold text-center">{topCard.cardNumber}</div>
-          <div className="text-end" style={{ transform: 'rotate(180deg)' }}>
+          <div className="text-start" style={{ transform: 'rotate(180deg)' }}>
             {topCard.cardNumber}
           </div>
         </>
