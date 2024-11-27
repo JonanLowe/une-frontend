@@ -21,8 +21,8 @@ socket.on("disconnect", () => {
 
 //PORT here must be the same as in socket.js
 
-server.listen(4000, () => {
-  console.log("Server Listening on port 4000");
+server.listen(4002, () => {
+  console.log("Server Listening on port 4002");
 });
 
 // GAME SETUP
@@ -46,13 +46,49 @@ function connected(socket) {
     console.log("game room full");
     return false;
   }
-  // need to emit players and receive it in game:
-  // io.emit("updateConnections", totalPlayers);
+
+  io.emit("updateConnections", totalPlayers);
 
   socket.on("buttonPressed", (buttonPressedState) => {
-    console.log("buttonpressedfromserverlog of player", socket.id);
-
     io.emit("buttonPressedFromServer", buttonPressedState);
+  });
+
+  socket.on("cardDrawn", ({ newDeck, newP1, newP2 }) => {
+    io.emit("cardDrawnFromServer", {
+      newDeck: newDeck,
+      newP1: newP1,
+      newP2: newP2,
+    });
+  });
+
+  socket.on(
+    "playCard",
+    ({ newP1, newP2, newCurrentPlayer, newDiscardPile }) => {
+      io.emit("playCardFromServer", {
+        newP1: newP1,
+        newP2: newP2,
+        newCurrentPlayer: newCurrentPlayer,
+        newDiscardPile: newDiscardPile,
+      });
+    }
+  );
+
+  socket.on("gameStart", ({ deck, discard, makeP1, makeP2, gameOn }) => {
+    io.emit("gameStartFromServer", {
+      deck: deck,
+      discard: discard,
+      makeP1: makeP1,
+      makeP2: makeP2,
+      gameOn: gameOn,
+    });
+  });
+
+  socket.on("playerOnePlayCard", (updatedPlayerOne) => {
+    io.emit("playerOnePlayCardFromServer", updatedPlayerOne);
+  });
+
+  socket.on("playerTwoPlayCard", (updatedPlayerTwo) => {
+    io.emit("playerTwoPlayCardFromServer", updatedPlayerTwo);
   });
 
   socket.on("disconnect", function () {
@@ -65,8 +101,7 @@ function connected(socket) {
     console.log("Current number of players: " + totalPlayers.length);
 
     // need to emit players and receive it in game:
-    // io.emit("updateConnections", totalPlayers);
+    io.emit("updateConnections", totalPlayers);
   });
-  console.log(totalPlayers, "totalPlayers from server");
-  // need to emit totalplayers.
+  console.log(totalPlayers.length, "number of players on server");
 }

@@ -13,19 +13,50 @@ export default function Game() {
   const [playingDiscardPile, setPlayingDiscardPile] = useState(new Discard());
   const [playerOne, setPlayerOne] = useState(new Player("Player 1"));
   const [playerTwo, setPlayerTwo] = useState(new Player("Player 2"));
+
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [isGameOn, setIsGameOn] = useState(false);
-  const [buttonPressed, setButtonPressed] = useState(false)
-  
+  const [buttonPressed, setButtonPressed] = useState(false) 
   socket.off("buttonPressedFromServer")
   
   function socketTest (){
-  console.log("button pressed by ", socket.id)
   socket.emit("buttonPressed", buttonPressed);
 }
 
   socket.on("buttonPressedFromServer", (response) => {
     setButtonPressed(!response)
+})
+
+socket.on("cardDrawnFromServer", (response) => {
+  console.log(response, "THE RESPONSE")
+  console.log(response.newDeck, "changed deck in game")
+  setPlayingDeck(response.newDeck)
+  setPlayerOne(response.newP1);
+  setPlayerTwo(response.newP2);
+})
+
+socket.on("playCardFromServer", (response) => {
+  console.log(response, "playCardFromServer")
+  setCurrentPlayer(response.newCurrentPlayer);
+  setPlayingDiscardPile(response.newDiscardPile);
+})
+
+socket.on("playerOnePlayCardFromServer", (response) => {
+  console.log(response, "playerOnePlayCardFromServer")
+  setPlayerOne(response);
+})
+
+socket.on("playerTwoPlayCardFromServer", (response) => {
+  console.log(response, "playerTwoPlayCardFromServer")
+  setPlayerTwo(response);
+})
+
+socket.on("gameStartFromServer", (response)=> {
+  setPlayingDeck(response.deck);
+  setPlayingDiscardPile(response.discard);
+  setPlayerOne(response.makeP1);
+  setPlayerTwo(response.makeP2);
+  setIsGameOn(response.gameOn);
 })
 
   const hasValidMove = (playerHand) => {
@@ -38,8 +69,7 @@ export default function Game() {
   };
 
   const handleGameStart = () => {
-    if (isGameOn) return;
-    
+    if (isGameOn) return;  
     const newDeck = new Deck();
     const newDiscardPile = new Discard();
     const newPlayerOne = new Player("Player 1");
@@ -47,12 +77,10 @@ export default function Game() {
     const totalPlayers = [newPlayerOne, newPlayerTwo];
     
     newDeck.startGame(totalPlayers, newDiscardPile.discardPile);
-    
-    setPlayingDeck(newDeck);
-    setPlayingDiscardPile(newDiscardPile);
-    setPlayerOne(newPlayerOne);
-    setPlayerTwo(newPlayerTwo);
-    setIsGameOn(true);
+
+    socket.emit("gameStart", {deck: newDeck, discard: newDiscardPile, makeP1: newPlayerOne, makeP2: newPlayerTwo, gameOn: true})
+
+
   };
 
   const handleDrawCard = (playerNumber) => {
@@ -62,35 +90,33 @@ export default function Game() {
       
       if (playerNumber === 1) {
         updatedDeck.drawCards(1, playerOne.hand);
-        setPlayerOne({ ...playerOne, hand: [...playerOne.hand] });
       } else {
         updatedDeck.drawCards(1, playerTwo.hand);
-        setPlayerTwo({ ...playerTwo, hand: [...playerTwo.hand] });
       }
-      setPlayingDeck(updatedDeck);
-      // Switch turns after drawing if no valid moves
       const currentHand = playerNumber === 1 ? playerOne.hand : playerTwo.hand;
       if (!hasValidMove(currentHand)) {
         setCurrentPlayer(currentPlayer === 1 ? 2 : 1);
       }
+      socket.emit("cardDrawn", {newDeck: updatedDeck, newP1: { ...playerOne, hand: [...playerOne.hand] }, newP2: { ...playerTwo, hand: [...playerTwo.hand] }});
     }
   };
 
   const handlePlayCard = (playerNumber, cardIndex) => {
+    console.log("HANDLE PLAY CARD")
     if (playerNumber === currentPlayer) {
       if (playerNumber === 1) {
         const updatedPlayerOne = new Player(playerOne.username);
         updatedPlayerOne.hand = [...playerOne.hand];
         updatedPlayerOne.playCard(cardIndex, playingDiscardPile.discardPile);
-        setPlayerOne(updatedPlayerOne);
+          socket.emit("playerOnePlayCard", updatedPlayerOne)
       } else {
         const updatedPlayerTwo = new Player(playerTwo.username);
         updatedPlayerTwo.hand = [...playerTwo.hand];
         updatedPlayerTwo.playCard(cardIndex, playingDiscardPile.discardPile);
-        setPlayerTwo(updatedPlayerTwo);
+          socket.emit("playerTwoPlayCard", updatedPlayerTwo)
       }
-      setCurrentPlayer(currentPlayer === 1 ? 2 : 1);
-      setPlayingDiscardPile({ ...playingDiscardPile });
+
+      socket.emit("playCard", {newCurrentPlayer: currentPlayer === 1 ? 2 : 1, newDiscardPile: { ...playingDiscardPile }});
     }
   };
 
