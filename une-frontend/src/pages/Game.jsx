@@ -20,9 +20,12 @@ export default function Game() {
   const [buttonPressed, setButtonPressed] = useState(false) 
   const [isGameOver, setIsGameOver] = useState(false);
   socket.off("buttonPressedFromServer")
+  socket.off("cardDrawnFromServer")
   socket.off("playCardFromServer")
   socket.off("playerTwoPlayCardFromServer")
   socket.off("playerOnePlayCardFromServer")
+  socket.off("gameStartFromServer")
+  socket.off("gameOverFromServer")
   
   function socketTest (){
   socket.emit("buttonPressed", buttonPressed);
@@ -33,8 +36,6 @@ export default function Game() {
 })
 
 socket.on("cardDrawnFromServer", (response) => {
-  console.log(response, "THE RESPONSE")
-  console.log(response.newDeck, "changed deck in game")
   setPlayingDeck(response.newDeck)
   setPlayerOne(response.newP1);
   setPlayerTwo(response.newP2);
