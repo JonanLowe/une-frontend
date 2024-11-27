@@ -63,10 +63,9 @@ function connected(socket) {
 
   socket.on(
     "playCard",
-    ({ newP1, newP2, newCurrentPlayer, newDiscardPile }) => {
+    ({newCurrentPlayer, newDiscardPile }) => {
+      console.log("emit card")
       io.emit("playCardFromServer", {
-        newP1: newP1,
-        newP2: newP2,
         newCurrentPlayer: newCurrentPlayer,
         newDiscardPile: newDiscardPile,
       });
