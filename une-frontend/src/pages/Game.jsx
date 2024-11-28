@@ -7,6 +7,8 @@ import CallUnoButton from "./CallUnoButton.jsx";
 import QuitButton from "./QuitButton.jsx";
 import { socket } from "../socket.js";
 import GameOver from "../components/GameOver.jsx";
+import Player1Dummy from "./Player1Dummy.jsx";
+import Player2Dummy from "./Player2Dummy.jsx";
 
 
 export default function Game() {
@@ -14,11 +16,14 @@ export default function Game() {
   const [playingDiscardPile, setPlayingDiscardPile] = useState(new Discard());
   const [playerOne, setPlayerOne] = useState(new Player("Player 1"));
   const [playerTwo, setPlayerTwo] = useState(new Player("Player 2"));
+  const [totalPlayers, setTotalPlayers] = useState([])
 
   const [currentPlayer, setCurrentPlayer] = useState(1);
   const [isGameOn, setIsGameOn] = useState(false);
   const [buttonPressed, setButtonPressed] = useState(false) 
   const [isGameOver, setIsGameOver] = useState(false);
+
+  const [thisPlayer, setThisPlayer] = useState(2)
   socket.off("buttonPressedFromServer")
   socket.off("cardDrawnFromServer")
   socket.off("playCardFromServer")
@@ -39,6 +44,20 @@ socket.on("cardDrawnFromServer", (response) => {
   setPlayingDeck(response.newDeck)
   setPlayerOne(response.newP1);
   setPlayerTwo(response.newP2);
+})
+
+socket.on("updateConnections", (response)=>{
+  console.log("updateConnections")
+  console.log(response, "totalPlayers")
+  console.log(response[0].socketID, "totalPlayers[0].socketID")
+  console.log(response[1].socketID, "totalPlayers[1].socketID")
+  if (response.length ===1) {setPlayerOne(response[0])
+  setTotalPlayers([response[0]])
+  }
+  if (response.length>1){
+  setPlayerTwo(response[1])
+  setTotalPlayers([response[0], response[1]])
+}
 })
 
 socket.on("playCardFromServer", (response) => {
@@ -75,17 +94,19 @@ socket.on("gameOverFromServer", (response)=>{
     );
   };
 
-  const handleGameStart = () => {
+  const handleGameStart = (players) => {
     if (isGameOn) return;  
     const newDeck = new Deck();
     const newDiscardPile = new Discard();
-    const newPlayerOne = new Player("Player 1");
-    const newPlayerTwo = new Player("Player 2");
-    const totalPlayers = [newPlayerOne, newPlayerTwo];
+    // const newPlayerOne = new Player(playerOne);
+    // const newPlayerTwo = new Player(playerTwo);
+    const newTotalPlayers = players
+
+    console.log(newTotalPlayers, "LOG OF NEWTOTALPLAYERS")
     
     newDeck.startGame(totalPlayers, newDiscardPile.discardPile);
 
-    socket.emit("gameStart", {deck: newDeck, discard: newDiscardPile, makeP1: newPlayerOne, makeP2: newPlayerTwo, gameOn: true})
+    socket.emit("gameStart", {deck: newDeck, discard: newDiscardPile, makeP1: newTotalPlayers[0], makeP2: newTotalPlayers[1], gameOn: true})
   };
 
   const handleDrawCard = (playerNumber) => {
@@ -134,24 +155,30 @@ socket.on("gameOverFromServer", (response)=>{
     }
   };
 
+  
   return (
     <div className="position-relative vh-100 bg-success overflow-hidden">
       <QuitButton socketTest = {socketTest} buttonPressed = {buttonPressed} />
+      {(socket.id === totalPlayers[0].socketID) ? <h2>{`You Are Player 1`}</h2> : <h2>{`You Are Player 2`}</h2>}
+
+      {(socket.id === totalPlayers[0].socketID) ? 
       <div className="position-relative w-100 h-100 bg-success-subtle">
-        <Player1
+       <Player1
           hand={playerOne.hand}
           isCurrentPlayer={currentPlayer === 1}
           onPlayCard={(cardIndex) => handlePlayCard(1, cardIndex)}
           discardPile={playingDiscardPile.discardPile}
           hasValidMove={hasValidMove(playerOne.hand)}
-        />
-        <Player2
+       />
+
+        <Player2Dummy
           hand={playerTwo.hand}
           isCurrentPlayer={currentPlayer === 2}
           onPlayCard={(cardIndex) => handlePlayCard(2, cardIndex)}
           discardPile={playingDiscardPile.discardPile}
           hasValidMove={hasValidMove(playerTwo.hand)}
         />
+
         {isGameOver? <GameOver />:  <PilesArea
           deck={playingDeck}
           discardPile={playingDiscardPile.discardPile}
@@ -161,10 +188,38 @@ socket.on("gameOverFromServer", (response)=>{
             hasValidMove(playerOne.hand) : 
             hasValidMove(playerTwo.hand)}
         />}
-      </div>
+      </div> : 
+      <div className="position-relative w-100 h-100 bg-success-subtle">
+      <Player1Dummy
+         hand={playerOne.hand}
+         isCurrentPlayer={currentPlayer === 1}
+         onPlayCard={(cardIndex) => handlePlayCard(1, cardIndex)}
+         discardPile={playingDiscardPile.discardPile}
+         hasValidMove={hasValidMove(playerOne.hand)}
+      />
+
+       <Player2
+         hand={playerTwo.hand}
+         isCurrentPlayer={currentPlayer === 2}
+         onPlayCard={(cardIndex) => handlePlayCard(2, cardIndex)}
+         discardPile={playingDiscardPile.discardPile}
+         hasValidMove={hasValidMove(playerTwo.hand)}
+       />
+
+       {isGameOver? <GameOver />:  <PilesArea
+         deck={playingDeck}
+         discardPile={playingDiscardPile.discardPile}
+         currentPlayer={currentPlayer}
+         onDrawCard={handleDrawCard}
+         hasValidMove={currentPlayer === 1 ? 
+           hasValidMove(playerOne.hand) : 
+           hasValidMove(playerTwo.hand)}
+       />}
+     </div>}
       <CallUnoButton 
-        onClick={handleGameStart}
-        disabled={isGameOn}
+        onClick={()=>{handleGameStart(totalPlayers)}}
+        // disabled={totalPlayers.length<2 || isGameOn}
+        disabled = {isGameOn}
       />
     </div>
   );
