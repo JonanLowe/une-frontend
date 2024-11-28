@@ -1,4 +1,4 @@
-import './App.css'
+
 import { Route, Routes } from 'react-router-dom'
 import { useState, useEffect } from 'react';
 
@@ -51,10 +51,10 @@ export default function App() {
     <Route path="/game/" element={<Game/>}/>
     <Route path="/gameOver/" element={<GameOver/>}/>
     </Routes>
-      <div className = "App">
+      {/* <div className = "App">
          <ConnectionState isConnected={ isConnected } />
           <ConnectionManager />
-      </div>
+      </div> */}
   </>
   )
 }
