@@ -42,10 +42,12 @@ export default function Player1({ hand, isCurrentPlayer, onPlayCard, discardPile
             style={getCardStyle(card)}
             onClick={() => isCurrentPlayer && onPlayCard(i)}
           >
-            <div className="text-start">{card.cardNumber}</div>
-            <div className="fs-1 fw-bold">{card.cardNumber}</div>
-            <div className="text-start" style={{ transform: 'rotate(180deg)' }}>
+            <div className="text-start text-light">{card.cardNumber}</div>
+            <div className="fs-1 fw-bold text-light">
               {card.cardNumber}
+            </div>
+            <div className="text-start text-light" style={{ transform: 'rotate(180deg)' }}>
+                {card.cardNumber}
             </div>
           </div>
         ))}
