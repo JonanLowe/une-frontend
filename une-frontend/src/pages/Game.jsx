@@ -48,11 +48,12 @@ socket.on("cardDrawnFromServer", (response) => {
 
 socket.on("updateConnections", (response)=>{
   console.log("updateConnections")
-  console.log(response, "totalPlayers")
-  console.log(response[0].socketID, "totalPlayers[0].socketID")
-  console.log(response[1].socketID, "totalPlayers[1].socketID")
+  console.log(response, "response")
+  console.log(response[0].socketID, "response totalPlayers[0].socketID")
+  console.log(response[1].socketID, "response totalPlayers[1].socketID")
   if (response.length ===1) {setPlayerOne(response[0])
   setTotalPlayers([response[0]])
+  console.log(totalPlayers, "totalPlayers after if statement")
   }
   if (response.length>1){
   setPlayerTwo(response[1])
@@ -155,9 +156,13 @@ socket.on("gameOverFromServer", (response)=>{
     }
   };
 
+
   
   return (
     <div className="position-relative vh-100 bg-success overflow-hidden">
+
+     {(totalPlayers.length < 2) ? <h2>WAITING FOR PLAYERS</h2>:<h2>WAITING FOR PLAYERS</h2>}
+
       <QuitButton socketTest = {socketTest} buttonPressed = {buttonPressed} />
       {(socket.id === totalPlayers[0].socketID) ? <h2>{`You Are Player 1`}</h2> : <h2>{`You Are Player 2`}</h2>}
 
@@ -217,7 +222,7 @@ socket.on("gameOverFromServer", (response)=>{
        />}
      </div>}
       <CallUnoButton 
-        onClick={()=>{handleGameStart(totalPlayers)}}
+        onClick={(totalPlayers)=>{handleGameStart(totalPlayers)}}
         // disabled={totalPlayers.length<2 || isGameOn}
         disabled = {isGameOn}
       />
