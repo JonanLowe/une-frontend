@@ -38,14 +38,16 @@ export default function Player1({ hand, isCurrentPlayer, onPlayCard, discardPile
         {hand.map((card, i) => (
           <div
             key={i}
-            className="bg-white border border-secondary rounded shadow-sm d-flex flex-column justify-content-between p-2"
+            className="border border-secondary rounded shadow-sm d-flex flex-column justify-content-between p-2"
             style={getCardStyle(card)}
             onClick={() => isCurrentPlayer && onPlayCard(i)}
           >
-            <div className="text-start">{card.cardNumber}</div>
-            <div className="fs-1 fw-bold">{card.cardNumber}</div>
-            <div className="text-start" style={{ transform: 'rotate(180deg)' }}>
+            <div className="text-start text-light">{card.cardNumber}</div>
+            <div className="fs-1 fw-bold text-light">
               {card.cardNumber}
+            </div>
+            <div className="text-start text-light" style={{ transform: 'rotate(180deg)' }}>
+                {card.cardNumber}
             </div>
           </div>
         ))}
