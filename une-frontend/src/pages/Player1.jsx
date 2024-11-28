@@ -38,7 +38,7 @@ export default function Player1({ hand, isCurrentPlayer, onPlayCard, discardPile
         {hand.map((card, i) => (
           <div
             key={i}
-            className="bg-white border border-secondary rounded shadow-sm d-flex flex-column justify-content-between p-2"
+            className="border border-secondary rounded shadow-sm d-flex flex-column justify-content-between p-2"
             style={getCardStyle(card)}
             onClick={() => isCurrentPlayer && onPlayCard(i)}
           >
