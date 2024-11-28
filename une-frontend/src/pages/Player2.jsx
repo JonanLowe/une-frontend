@@ -33,19 +33,24 @@ export default function Player2({ hand, isCurrentPlayer, onPlayCard, discardPile
           <div className="text-warning mt-1">No valid moves - Must draw!</div>
         }
       </div>
-          <div className="d-flex justify-content-center gap-2">
-          {hand.map((card, i) => (
-            <div
-              key={i}
-              className="bg-white border border-secondary rounded shadow-sm"
-              style={{ width: '100px', height: '150px', backgroundColor: card.cardColour, cursor: isCurrentPlayer ? 'pointer' : 'default' }}
-          onClick={() => isCurrentPlayer && onPlayCard(i)}
-        >
-          <p>{card.cardNumber}</p>
-          {card.cardColour}
-        </div>
-          ))}
+      <div className="d-flex justify-content-center gap-2">
+        {hand.map((card, i) => (
+          <div
+            key={i}
+            className="border border-secondary rounded shadow-sm d-flex flex-column justify-content-between p-2"
+            style={getCardStyle(card)}
+            onClick={() => isCurrentPlayer && onPlayCard(i)}
+          >
+            <div className="text-start text-light">{card.cardNumber}</div>
+            <div className="fs-1 fw-bold text-light">
+              {card.cardNumber}
+            </div>
+            <div className="text-start text-light" style={{ transform: 'rotate(180deg)' }}>
+                {card.cardNumber}
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
-  </div>
-  )
+  );
 }
